@@ -6,7 +6,7 @@ import javax.swing.*;
 import CLASSES.BackgroundPanel;
 import CLASSES.RoundedButton;
 import CLASSES.RoundedPasswordField;
-import CLASSES.RoundedTextField;
+import CLASSES.RoundedTextFieldPlaceholder;
 
 import java.net.URL;
 
@@ -17,6 +17,7 @@ public class Login {
     private ImageIcon iconLogo;
     private JPasswordField jpsenha;
     private JButton btnlogin;
+    private Dimension novaAltura = new Dimension(200, 40);
 
     public Login() {
         tela = new JFrame("Login de Usuário");
@@ -99,7 +100,8 @@ public class Login {
         gbc.gridy = linha;
         painelPrincipal.add(lblcpf, gbc);
         linha++;
-        txtcpf = new RoundedTextField(22);
+        txtcpf = new RoundedTextFieldPlaceholder(22, "Digite seu CPF");
+        txtcpf.setPreferredSize(novaAltura); // Aplica a nova altura
         gbc.insets = new Insets(0, 5, 5, 5);
         gbc.gridx = 0;
         gbc.gridy = linha;
@@ -117,6 +119,7 @@ public class Login {
         painelPrincipal.add(lblsenha, gbc);
         linha++;
         jpsenha = new RoundedPasswordField(22);
+        jpsenha.setPreferredSize(novaAltura); // Aplica a nova altura
         gbc.insets = new Insets(0, 5, 5, 5);
         gbc.gridx = 0;
         gbc.gridy = linha;
@@ -126,7 +129,6 @@ public class Login {
         // Mensagem3
         lblmsn3 = new JLabel("ESQUECEU A SENHA?");
         lblmsn3.setForeground(Color.GREEN);
-        // FONTE APLICADA (menor e em itálico)
         lblmsn3.setFont(new Font("Montserrat", Font.ITALIC, 10));
         gbc.anchor = GridBagConstraints.CENTER; // Centraliza
         gbc.insets = new Insets(5, 5, 5, 5);

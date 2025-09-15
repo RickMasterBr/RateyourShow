@@ -9,17 +9,18 @@ import CLASSES.BackgroundPanel;
 import CLASSES.RoundedButton;
 import CLASSES.RoundedComboBox;
 import CLASSES.RoundedPasswordField;
-import CLASSES.RoundedTextField;
+import CLASSES.RoundedTextFieldPlaceholder;
 
 public class cadastro {
 
     private JFrame tela;
-    private JTextField txtcpf, txtnome, txtemail;
-    private JPasswordField jpsenha;
-    private JComboBox<String> genero;
+    private RoundedTextFieldPlaceholder txtcpf, txtnome, txtemail;
+    private RoundedPasswordField jpsenha;
+    private RoundedComboBox<String> genero;
     private JLabel lblimagem, lblmsn, lblmsn2, lblcpf, lblnome, lblemail, lblsenha, lblgenero, lblNulo;
-    private JButton btnconfirmar;
+    private RoundedButton btnconfirmar;
     private ImageIcon iconLogo;
+    private Dimension novaAltura = new Dimension(200, 40);
 
     public cadastro() {
         tela = new JFrame("Cadastro de Usuários");
@@ -87,14 +88,14 @@ public class cadastro {
         // CPF
         lblcpf = new JLabel("CPF");
         lblcpf.setForeground(Color.WHITE);
-        // FONTE APLICADA
         lblcpf.setFont(new Font("Montserrat", Font.PLAIN, 14));
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridx = 0;
         gbc.gridy = linha;
         painelPrincipal.add(lblcpf, gbc);
         linha++;
-        txtcpf = new RoundedTextField(22);
+        txtcpf = new RoundedTextFieldPlaceholder(22, "Digite seu CPF");
+        txtcpf.setPreferredSize(novaAltura);
         gbc.gridx = 0;
         gbc.gridy = linha;
         painelPrincipal.add(txtcpf, gbc);
@@ -103,13 +104,13 @@ public class cadastro {
         // Email
         lblemail = new JLabel("Email");
         lblemail.setForeground(Color.WHITE);
-        // FONTE APLICADA
-        lblemail.setFont(new Font("Montserrat", Font.PLAIN, 14));
+        lblemail.setFont(new Font("Montserrat", Font.PLAIN, 16));
         gbc.gridx = 0;
         gbc.gridy = linha;
         painelPrincipal.add(lblemail, gbc);
         linha++;
-        txtemail = new RoundedTextField(22);
+        txtemail = new RoundedTextFieldPlaceholder(22, "Digite seu email");
+        txtemail.setPreferredSize(novaAltura);
         gbc.gridx = 0;
         gbc.gridy = linha;
         painelPrincipal.add(txtemail, gbc);
@@ -118,13 +119,13 @@ public class cadastro {
         // Nome
         lblnome = new JLabel("Nome");
         lblnome.setForeground(Color.WHITE);
-        // FONTE APLICADA
         lblnome.setFont(new Font("Montserrat", Font.PLAIN, 14));
         gbc.gridx = 0;
         gbc.gridy = linha;
         painelPrincipal.add(lblnome, gbc);
         linha++;
-        txtnome = new RoundedTextField(22);
+        txtnome = new RoundedTextFieldPlaceholder(22, "Digite seu nome");
+        txtnome.setPreferredSize(novaAltura);
         gbc.gridx = 0;
         gbc.gridy = linha;
         painelPrincipal.add(txtnome, gbc);
@@ -133,13 +134,13 @@ public class cadastro {
         // Senha
         lblsenha = new JLabel("Senha");
         lblsenha.setForeground(Color.WHITE);
-        // FONTE APLICADA
         lblsenha.setFont(new Font("Montserrat", Font.PLAIN, 14));
         gbc.gridx = 0;
         gbc.gridy = linha;
         painelPrincipal.add(lblsenha, gbc);
         linha++;
         jpsenha = new RoundedPasswordField(22);
+        jpsenha.setPreferredSize(novaAltura);
         gbc.gridx = 0;
         gbc.gridy = linha;
         painelPrincipal.add(jpsenha, gbc);
