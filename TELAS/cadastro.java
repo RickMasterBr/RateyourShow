@@ -5,6 +5,7 @@ import java.net.URL;
 
 import javax.swing.*;
 
+import BD.UsuarioDAO;
 import CLASSES.BackgroundPanel;
 import CLASSES.RoundedButton;
 import CLASSES.RoundedComboBox;
@@ -207,11 +208,19 @@ public class cadastro {
                 return;
             }
 
-            // Se passou em tudo → aqui entraria o INSERT no banco
-            JOptionPane.showMessageDialog(tela, "Cadastro realizado com sucesso!");
+            try {
+                    UsuarioDAO dao = new UsuarioDAO();  // criar objeto
+                    dao.salvar(cpf, email, nome, senha, generoSelecionado); // chamar método
+                    JOptionPane.showMessageDialog(tela, "Usuário cadastrado com sucesso!");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(tela, "Erro: " + ex.getMessage());
+                }
+            
 
             tela.dispose();
             new Login();
+
+
         });
 
         tela.setContentPane(painelPrincipal);
