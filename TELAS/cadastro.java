@@ -30,7 +30,7 @@ public class cadastro {
     public cadastro() {
         tela = new JFrame("Cadastro de Usuários");
         tela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tela.setSize(800, 600); // Aumentei a altura para melhor espaçamento
+        tela.setSize(900, 700); // Aumentei a altura para melhor espaçamento
         tela.setResizable(false);
 
         // --- ESTRUTURA PRINCIPAL ---
@@ -42,7 +42,7 @@ public class cadastro {
 
         // 2. Painel do Formulário (o "card" flutuante)
         // Usando nosso novo RoundedPanel com um fundo preto semi-transparente
-        RoundedPanel formPanel = new RoundedPanel(new GridBagLayout(), 20, new Color(0, 0, 0, 90));
+        RoundedPanel formPanel = new RoundedPanel(new GridBagLayout(), 20, new Color(100, 100, 100, 200));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40)); // Padding interno
 
         GridBagConstraints gbc = new GridBagConstraints();
