@@ -28,7 +28,7 @@ public class cadastro {
         tela = new JFrame("Cadastro de Usuários");
         tela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Ajustado para um tamanho que acomode bem o card
-        tela.setSize(800, 650); 
+        tela.setSize(1000, 700); 
         tela.setResizable(false);
 
         URL urlFundo = getClass().getResource("/TELAS/img/background.png");
