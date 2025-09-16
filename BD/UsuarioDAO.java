@@ -1,6 +1,7 @@
 package BD;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class UsuarioDAO {
     private Conexao conexao;
@@ -19,6 +20,18 @@ public class UsuarioDAO {
                 stmt.setString(4, senha);
                 stmt.setString(5, genero);
                 stmt.executeUpdate();
+            }
+    }
+
+    public boolean logar(String cpf, String senha) throws Exception{
+        String sql = "SELECT * from usuario WHERE cpf = ? AND senha = ?";
+        try(Connection conn = conexao.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+                stmt.setString(1, cpf);
+                stmt.setString(2, senha);
+                try (ResultSet rs = stmt.executeQuery()){
+                    return rs.next();
+                }
             }
     }
 }

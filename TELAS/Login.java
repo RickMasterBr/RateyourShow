@@ -2,6 +2,8 @@ package TELAS;
 
 import java.awt.*;
 import javax.swing.*;
+
+import BD.UsuarioDAO;
 import CLASSES.BackgroundPanel;
 import CLASSES.RoundedButton;
 import CLASSES.RoundedPasswordField;
@@ -17,8 +19,10 @@ public class Login {
     private ImageIcon iconLogo;
     private RoundedButton btnlogin; // Usando o botão arredondado
     private Dimension novaAltura = new Dimension(280, 40); // Largura um pouco maior para o card menor
+    private UsuarioDAO dao;
 
     public Login() {
+        dao = new UsuarioDAO();
         tela = new JFrame("Login de Usuário");
         tela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         tela.setSize(800, 600); // Mesmo tamanho da tela de cadastro para transição suave
@@ -155,11 +159,12 @@ public class Login {
             
             // Lógica de verificação no banco de dados (exemplo)
             // Você precisará criar um método em UsuarioDAO para verificar o login
-            /* try {
-                UsuarioDAO dao = new UsuarioDAO();
-                if (dao.verificarLogin(cpf, senha)) {
+             try {
+
+                if (dao.logar(cpf, senha)) {
                     JOptionPane.showMessageDialog(tela, "Login realizado!");
                     tela.dispose();
+                    new Home();
                     // new Home(); // sua tela principal
                 } else {
                     lblFeedback.setText("CPF ou senha inválidos.");
@@ -167,7 +172,7 @@ public class Login {
             } catch (Exception ex) {
                 lblFeedback.setText("Erro de conexão com o banco.");
             }
-            */
+            
             
             // Lógica de placeholder por enquanto:
              if (cpf.equals("123") && senha.equals("123")) {
