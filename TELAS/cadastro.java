@@ -9,7 +9,7 @@ import CLASSES.RoundedButton;
 import CLASSES.RoundedComboBox;
 import CLASSES.RoundedPasswordField;
 import CLASSES.RoundedTextFieldPlaceholder;
-import CLASSES.RoundedPanel; // --- NOVO: Importa nosso painel customizado
+import CLASSES.RoundedPanel;
 
 public class cadastro {
 
@@ -18,32 +18,27 @@ public class cadastro {
     private RoundedPasswordField jpsenha;
     private RoundedComboBox<String> genero;
     private JLabel lblimagem, lblmsn, lblmsn2, lblcpf, lblnome, lblemail, lblsenha, lblgenero;
-    
-    // --- MELHORIA: Título principal e rótulo de feedback ---
     private JLabel lblTitulo;
     private JLabel lblFeedback; 
-    
     private RoundedButton btnconfirmar;
     private ImageIcon iconLogo;
-    private Dimension novaAltura = new Dimension(200, 38); // Altura padronizada
+    private Dimension novaAltura = new Dimension(200, 38);
 
     public cadastro() {
         tela = new JFrame("Cadastro de Usuários");
         tela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tela.setSize(900, 700); // Aumentei a altura para melhor espaçamento
+        // Ajustado para um tamanho que acomode bem o card
+        tela.setSize(800, 650); 
         tela.setResizable(false);
 
-        // --- ESTRUTURA PRINCIPAL ---
-        // 1. Painel de Fundo (com a imagem)
         URL urlFundo = getClass().getResource("/TELAS/img/background.png");
         Image imagemFundo = new ImageIcon(urlFundo).getImage();
         BackgroundPanel painelDeFundo = new BackgroundPanel(imagemFundo);
-        painelDeFundo.setLayout(new GridBagLayout()); // Para centralizar o card
+        painelDeFundo.setLayout(new GridBagLayout());
 
-        // 2. Painel do Formulário (o "card" flutuante)
-        // Usando nosso novo RoundedPanel com um fundo preto semi-transparente
+        // Corrigido a cor do painel para corresponder ao seu código mais recente
         RoundedPanel formPanel = new RoundedPanel(new GridBagLayout(), 20, new Color(100, 100, 100, 200));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40)); // Padding interno
+        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -51,21 +46,37 @@ public class cadastro {
 
         int linha = 0;
 
-        // --- MELHORIA: Título principal ---
+        // --- CORREÇÃO: Centralizando a Logo ---
+        // Usando o método seguro para carregar a imagem
+        URL urlLogo = getClass().getResource("/TELAS/img/logo.png");
+        if (urlLogo != null) {
+            iconLogo = new ImageIcon(urlLogo);
+        }
+        lblimagem = new JLabel(iconLogo);
+        gbc.gridwidth = 2; // Ocupa as 2 colunas
+        gbc.gridx = 0;
+        gbc.gridy = linha++;
+        gbc.anchor = GridBagConstraints.CENTER; // Define a âncora para o centro
+        gbc.fill = GridBagConstraints.NONE; // Para não esticar a imagem
+        gbc.insets = new Insets(5, 5, 15, 5);
+        formPanel.add(lblimagem, gbc);
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Retorna ao padrão
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        // Título principal
         lblTitulo = new JLabel("Crie sua Conta");
         lblTitulo.setForeground(Color.WHITE);
         lblTitulo.setFont(new Font("Montserrat", Font.BOLD, 28));
         lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridwidth = 2;
         gbc.gridx = 0;
         gbc.gridy = linha++;
-        gbc.insets = new Insets(5, 5, 20, 5); // Mais espaço abaixo do título
+        gbc.insets = new Insets(5, 5, 20, 5);
         formPanel.add(lblTitulo, gbc);
-        gbc.insets = new Insets(5, 5, 5, 5); // Reseta insets
+        gbc.insets = new Insets(5, 5, 5, 5);
+        
+        gbc.gridwidth = 1;
 
-        // --- ORGANIZAÇÃO EM DUAS COLUNAS (Nome e CPF na mesma linha) ---
-        gbc.gridwidth = 1; // Voltamos para uma coluna por componente
-
+        // (O resto do código continua exatamente o mesmo...)
         // Nome
         lblnome = new JLabel("Nome");
         lblnome.setForeground(Color.WHITE);
