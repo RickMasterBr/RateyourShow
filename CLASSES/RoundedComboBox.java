@@ -3,7 +3,7 @@ package CLASSES;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
-import javax.swing.plaf.basic.ComboPopup; // <-- import necessário
+import javax.swing.plaf.basic.ComboPopup;
 import java.awt.*;
 
 public class RoundedComboBox<E> extends JComboBox<E> {
@@ -18,7 +18,10 @@ public class RoundedComboBox<E> extends JComboBox<E> {
         setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         setUI(new RoundedComboBoxUI());
 
-        // Renderer para o valor exibido (evita fundo quadrado no label do combo)
+        // 🔹 Deixa o combo com altura semelhante ao RoundedPasswordField
+        setPreferredSize(new Dimension(200, 35));
+
+        // Renderer para o valor exibido
         setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value,
@@ -66,12 +69,10 @@ public class RoundedComboBox<E> extends JComboBox<E> {
                 @Override
                 protected void configurePopup() {
                     super.configurePopup();
-                    // torna o popup transparente para permitir os cantos arredondados aparentes
                     setOpaque(false);
                     setBackground(new Color(0, 0, 0, 0));
                     setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-                    // lista interna sem fundo opaco (para não "cortar" os cantos arredondados)
                     list.setOpaque(false);
                     list.setCellRenderer(new DefaultListCellRenderer() {
                         @Override
@@ -81,7 +82,6 @@ public class RoundedComboBox<E> extends JComboBox<E> {
                             lbl.setOpaque(false);
                             lbl.setBorder(BorderFactory.createEmptyBorder(4, 8, 4, 8));
                             if (isSelected) {
-                                // seleção translúcida — mais “moderno”
                                 lbl.setBackground(new Color(200, 200, 255, 120));
                                 lbl.setOpaque(true);
                             }
@@ -95,11 +95,9 @@ public class RoundedComboBox<E> extends JComboBox<E> {
                     Graphics2D g2 = (Graphics2D) g.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                    // pinta o fundo arredondado do popup
                     g2.setColor(comboBox.getBackground());
                     g2.fillRoundRect(0, 0, getWidth(), getHeight(), arcWidth, arcHeight);
 
-                    // borda do popup
                     g2.setColor(Color.GRAY);
                     g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcWidth, arcHeight);
 
@@ -110,7 +108,6 @@ public class RoundedComboBox<E> extends JComboBox<E> {
         }
     }
 
-    // opcional: getters/setters para arcWidth/arcHeight se quiser ajustar dinamicamente
     public void setArc(int w, int h) {
         this.arcWidth = w;
         this.arcHeight = h;
