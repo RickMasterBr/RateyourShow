@@ -5,12 +5,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
 import javax.swing.*;
-import BD.UsuarioDAO;
 import CLASSES.BackgroundPanel;
 import CLASSES.RoundedButton;
 import CLASSES.RoundedComboBox;
 import CLASSES.RoundedPasswordField;
 import CLASSES.RoundedTextFieldPlaceholder;
+import CLASSES.RoundedPanel; // Importando nosso painel padrão
 
 public class Perfil {
 
@@ -18,12 +18,12 @@ public class Perfil {
     private RoundedTextFieldPlaceholder txtemail, txtnomeusuario;
     private RoundedPasswordField jpsenha;
     private RoundedComboBox<String> genero;
-    private JLabel lblUsuario, lblSair, lblEmail, lblNomeUsuario, lblSenha, lblGenero, lblAviso, lblLogo;
+    private JLabel lblUsuario, lblEmail, lblNomeUsuario, lblSenha, lblGenero, lblAviso, lblLogo;
     private RoundedButton btnAlterarDados, btnExcluirConta;
     private ImageIcon iconUsuario, iconLogo;
-    private Dimension novaAltura = new Dimension(200, 40);
+    private Dimension novaAltura = new Dimension(250, 40); // Dimensão padrão para os campos
 
-    // DADOS DO USUÁRIO LOGADO - você precisaria passar isso do Login.
+    // Dados do usuário (idealmente, seriam passados como parâmetros no construtor)
     private String emailUsuarioLogado = "steff@rateyourshow.com";
     private String nomeUsuarioLogado = "usuario_0";
     private String generoUsuarioLogado = "Homem cis";
@@ -31,168 +31,166 @@ public class Perfil {
     public Perfil() {
         tela = new JFrame("RateyourShow - Perfil");
         tela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tela.setSize(600, 700);
+        tela.setSize(800, 700); // Padronizando o tamanho da janela
         tela.setResizable(false);
         
+        // --- ESTRUTURA PADRÃO ---
+        // 1. Painel de Fundo
         URL urlFundo = getClass().getResource("/TELAS/img/background.png");
         Image imagemFundo = new ImageIcon(urlFundo).getImage();
-        JPanel painelPrincipal = new BackgroundPanel(imagemFundo);
-        painelPrincipal.setLayout(new GridBagLayout());
+        BackgroundPanel painelDeFundo = new BackgroundPanel(imagemFundo);
+        painelDeFundo.setLayout(new GridBagLayout());
+
+        // 2. Painel "Card" para o conteúdo
+        RoundedPanel formPanel = new RoundedPanel(new GridBagLayout(), 20, new Color(100, 100, 100, 200));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 20, 10, 20);
-        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(5, 10, 5, 10); // Espaçamento entre componentes
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        
+
         int linha = 0;
 
-        // Logo e Link de Sair (Não é sua conta? Faça login)
-        JPanel painelHeader = new JPanel(new BorderLayout(20, 0));
+        // --- CABEÇALHO DENTRO DO CARD ---
+        JPanel painelHeader = new JPanel(new BorderLayout());
         painelHeader.setOpaque(false);
+
+        // Ícone e nome de usuário
         URL urlUsuario = getClass().getResource("/TELAS/img/usuario.png");
         if(urlUsuario != null) {
-            iconUsuario = new ImageIcon(urlUsuario);
-        } else {
-            iconUsuario = new ImageIcon(); // Icone vazio se não encontrar
+            // Redimensionando o ícone para ficar melhor
+            ImageIcon originalIcon = new ImageIcon(urlUsuario);
+            Image scaledImage = originalIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+            iconUsuario = new ImageIcon(scaledImage);
         }
-        
-        lblUsuario = new JLabel("Usuário", iconUsuario, SwingConstants.LEFT);
+        lblUsuario = new JLabel(nomeUsuarioLogado, iconUsuario, SwingConstants.LEFT);
         lblUsuario.setForeground(Color.WHITE);
-        lblUsuario.setFont(new Font("Montserrat", Font.PLAIN, 16));
-        lblUsuario.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
-        JLabel linkLogin = new JLabel("Não é sua conta? Faça login");
-        linkLogin.setForeground(new Color(173, 255, 47));
-        linkLogin.setFont(new Font("Montserrat", Font.PLAIN, 14));
-        linkLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
-        linkLogin.addMouseListener(new MouseAdapter() {
+        lblUsuario.setFont(new Font("Montserrat", Font.BOLD, 16));
+        painelHeader.add(lblUsuario, BorderLayout.WEST);
+
+        // Link de Sair
+        JLabel linkSair = new JLabel("Sair");
+        linkSair.setForeground(Color.YELLOW);
+        linkSair.setFont(new Font("Montserrat", Font.BOLD, 14));
+        linkSair.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        linkSair.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                // Lógica para logout
                 tela.dispose();
                 new Login();
             }
         });
-
-        painelHeader.add(lblUsuario, BorderLayout.WEST);
-        painelHeader.add(linkLogin, BorderLayout.EAST);
+        painelHeader.add(linkSair, BorderLayout.EAST);
         
         gbc.gridx = 0;
-        gbc.gridy = linha;
-        gbc.gridwidth = 2; // Ocupa a largura de 2 colunas
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        painelPrincipal.add(painelHeader, gbc);
-        linha++;
+        gbc.gridy = linha++;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(5, 5, 20, 5); // Espaço abaixo do header
+        formPanel.add(painelHeader, gbc);
+        gbc.insets = new Insets(5, 10, 5, 10); // Reseta insets
 
-        // Logo central
-        URL urlLogo = getClass().getResource("/TELAS/img/logo.png");
-        if (urlLogo != null) {
-            iconLogo = new ImageIcon(urlLogo);
-        } else {
-            iconLogo = new ImageIcon(); // Ícone vazio se não encontrar
-        }
-        lblLogo = new JLabel(iconLogo);
-        lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridy = linha;
-        gbc.anchor = GridBagConstraints.CENTER;
-        painelPrincipal.add(lblLogo, gbc);
-        linha++;
-
-        // Campos de dados do usuário
-        // Campo Email
-        lblEmail = new JLabel("EMAIL");
+        // --- CAMPOS DO FORMULÁRIO ---
+        
+        // Email
+        lblEmail = new JLabel("Email");
         lblEmail.setForeground(Color.WHITE);
         lblEmail.setFont(new Font("Montserrat", Font.PLAIN, 14));
-        gbc.gridx = 0; gbc.gridy = linha; gbc.anchor = GridBagConstraints.WEST;
-        painelPrincipal.add(lblEmail, gbc);
-        linha++;
-        txtemail = new RoundedTextFieldPlaceholder(22, "");
-        txtemail.setText(emailUsuarioLogado);
-        txtemail.setPreferredSize(novaAltura);
-        gbc.gridy = linha;
-        painelPrincipal.add(txtemail, gbc);
-        linha++;
+        gbc.gridy = linha++;
+        gbc.anchor = GridBagConstraints.WEST;
+        formPanel.add(lblEmail, gbc);
 
-        // Campo Nome de Usuário
-        lblNomeUsuario = new JLabel("NOME DE USUÁRIO");
+        txtemail = new RoundedTextFieldPlaceholder(22, "");
+        txtemail.setPreferredSize(novaAltura);
+        gbc.gridy = linha++;
+        formPanel.add(txtemail, gbc);
+
+        // Nome de Usuário
+        lblNomeUsuario = new JLabel("Nome de Usuário");
         lblNomeUsuario.setForeground(Color.WHITE);
         lblNomeUsuario.setFont(new Font("Montserrat", Font.PLAIN, 14));
-        gbc.gridy = linha;
-        painelPrincipal.add(lblNomeUsuario, gbc);
-        linha++;
-        txtnomeusuario = new RoundedTextFieldPlaceholder(22, "");
-        txtnomeusuario.setText(nomeUsuarioLogado);
-        txtnomeusuario.setPreferredSize(novaAltura);
-        gbc.gridy = linha;
-        painelPrincipal.add(txtnomeusuario, gbc);
-        linha++;
+        gbc.gridy = linha++;
+        formPanel.add(lblNomeUsuario, gbc);
 
-        // Campo Senha
-        lblSenha = new JLabel("SENHA");
+        txtnomeusuario = new RoundedTextFieldPlaceholder(22, "");
+        txtnomeusuario.setPreferredSize(novaAltura);
+        gbc.gridy = linha++;
+        formPanel.add(txtnomeusuario, gbc);
+
+        // Senha
+        lblSenha = new JLabel("Nova Senha (deixe em branco para não alterar)");
         lblSenha.setForeground(Color.WHITE);
         lblSenha.setFont(new Font("Montserrat", Font.PLAIN, 14));
-        gbc.gridy = linha;
-        painelPrincipal.add(lblSenha, gbc);
-        linha++;
+        gbc.gridy = linha++;
+        formPanel.add(lblSenha, gbc);
+
         jpsenha = new RoundedPasswordField(22);
         jpsenha.setPreferredSize(novaAltura);
-        jpsenha.setEchoChar('*');
-        gbc.gridy = linha;
-        painelPrincipal.add(jpsenha, gbc);
-        linha++;
+        gbc.gridy = linha++;
+        formPanel.add(jpsenha, gbc);
 
-        // ComboBox Gênero
-        lblGenero = new JLabel("GÊNERO");
+        // Gênero
+        lblGenero = new JLabel("Gênero");
         lblGenero.setForeground(Color.WHITE);
         lblGenero.setFont(new Font("Montserrat", Font.PLAIN, 14));
-        gbc.gridy = linha;
-        painelPrincipal.add(lblGenero, gbc);
-        linha++;
-        genero = new RoundedComboBox<>(new String[]{"Homem cis", "Mulher cis", "Homem trans", "Mulher trans", "Não binário", "Outro", "Prefiro não informar"});
+        gbc.gridy = linha++;
+        formPanel.add(lblGenero, gbc);
+        
+        genero = new RoundedComboBox<>(new String[]{ " -- Selecione o Gênero -- ", "Masculino", "Feminino", "Outro" });
         genero.setSelectedItem(generoUsuarioLogado);
         genero.setPreferredSize(novaAltura);
-        gbc.gridy = linha;
-        painelPrincipal.add(genero, gbc);
-        linha++;
+        gbc.gridy = linha++;
+        formPanel.add(genero, gbc);
 
-        // Botões de Ação
-        btnAlterarDados = new RoundedButton("Alterar dados");
-        // Ajuste de cores para ser mais fiel à imagem (do cinza/ciano para o verde)
-        btnAlterarDados.setBackground(new Color(0, 150, 136)); 
-        btnAlterarDados.setForeground(Color.WHITE);
-        btnAlterarDados.setFont(new Font("Montserrat", Font.BOLD, 14));
-        btnAlterarDados.setPreferredSize(new Dimension(200, 45));
-        gbc.gridy = linha; gbc.anchor = GridBagConstraints.CENTER;
-        painelPrincipal.add(btnAlterarDados, gbc);
-        linha++;
-
-        btnExcluirConta = new RoundedButton("Excluir conta");
-        btnExcluirConta.setBackground(new Color(255, 99, 71)); 
-        btnExcluirConta.setForeground(Color.WHITE);
-        btnExcluirConta.setFont(new Font("Montserrat", Font.BOLD, 14));
-        btnExcluirConta.setPreferredSize(new Dimension(200, 45));
-        gbc.gridy = linha;
-        painelPrincipal.add(btnExcluirConta, gbc);
-        linha++;
-        
-        // Aviso
-        lblAviso = new JLabel("É necessária senha para realizar mudança dos dados ou excluir conta", SwingConstants.CENTER);
+        // Aviso de Feedback
+        lblAviso = new JLabel(" ", SwingConstants.CENTER); // Começa vazio
         lblAviso.setForeground(Color.WHITE);
-        lblAviso.setFont(new Font("Montserrat", Font.PLAIN, 12));
-        gbc.gridy = linha;
-        painelPrincipal.add(lblAviso, gbc);
-        linha++;
+        lblAviso.setFont(new Font("Montserrat", Font.ITALIC, 12));
+        gbc.gridy = linha++;
+        gbc.insets = new Insets(10, 5, 5, 5);
+        formPanel.add(lblAviso, gbc);
+        gbc.insets = new Insets(5, 10, 5, 10);
 
-        // Ações dos botões - a lógica do backend ainda precisa ser implementada
+        // --- BOTÕES DE AÇÃO ---
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        painelBotoes.setOpaque(false);
+
+        btnAlterarDados = new RoundedButton("Alterar Dados");
+        btnAlterarDados.setPreferredSize(new Dimension(180, 42));
+        painelBotoes.add(btnAlterarDados);
+
+        btnExcluirConta = new RoundedButton("Excluir Conta");
+        btnExcluirConta.setPreferredSize(new Dimension(180, 42));
+        painelBotoes.add(btnExcluirConta);
+
+        gbc.gridy = linha++;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+        formPanel.add(painelBotoes, gbc);
+
+        // --- MONTAGEM FINAL ---
+        painelDeFundo.add(formPanel);
+        tela.setContentPane(painelDeFundo);
+        
+        // Ações
         btnAlterarDados.addActionListener(e -> {
-            JOptionPane.showMessageDialog(tela, "Funcionalidade 'Alterar dados' em desenvolvimento.");
+            // Lógica futura aqui
+            lblAviso.setText("Funcionalidade 'Alterar dados' em desenvolvimento.");
         });
 
         btnExcluirConta.addActionListener(e -> {
-            JOptionPane.showMessageDialog(tela, "Funcionalidade 'Excluir conta' em desenvolvimento.");
+            // Lógica futura aqui
+            int confirm = JOptionPane.showConfirmDialog(tela, 
+                "Tem certeza que deseja excluir sua conta?\nEsta ação é irreversível.", 
+                "Confirmar Exclusão", 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.WARNING_MESSAGE);
+            
+            if (confirm == JOptionPane.YES_OPTION) {
+                lblAviso.setText("Funcionalidade 'Excluir conta' em desenvolvimento.");
+            }
         });
 
-        tela.setContentPane(painelPrincipal);
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
     }
