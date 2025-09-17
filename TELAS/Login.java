@@ -3,6 +3,8 @@ package TELAS;
 import java.awt.*;
 import javax.swing.*;
 
+import BD.Sessao;
+import BD.Usuario;
 import BD.UsuarioDAO;
 import CLASSES.BackgroundPanel;
 import CLASSES.RoundedButton;
@@ -159,18 +161,18 @@ public class Login {
             
             // Lógica de verificação no banco de dados (exemplo)
             // Você precisará criar um método em UsuarioDAO para verificar o login
-             try {
-
-                if (dao.logar(cpf, senha)) {
-                    JOptionPane.showMessageDialog(tela, "Login realizado!");
+            try {
+                Usuario usuario = dao.logar(cpf, senha);
+                if (usuario != null) {
+                    Sessao.iniciarSessao(usuario);
+                    JOptionPane.showMessageDialog(tela, "Bem-vindo, " + usuario.getNome() + "!");
                     tela.dispose();
                     new Home();
-                    // new Home(); // sua tela principal
-                } else {
-                    lblFeedback.setText("CPF ou senha inválidos.");
+                }else{
+                    JOptionPane.showMessageDialog(tela, "CPF ou senha inválidos!");
                 }
             } catch (Exception ex) {
-                lblFeedback.setText("Erro de conexão com o banco.");
+                JOptionPane.showMessageDialog(tela, "Erro: " + ex);
             }
             
             

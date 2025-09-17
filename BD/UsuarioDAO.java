@@ -23,15 +23,18 @@ public class UsuarioDAO {
             }
     }
 
-    public boolean logar(String cpf, String senha) throws Exception{
+    public Usuario logar(String cpf, String senha) throws Exception{
         String sql = "SELECT * from usuario WHERE cpf = ? AND senha = ?";
         try(Connection conn = conexao.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)){
                 stmt.setString(1, cpf);
                 stmt.setString(2, senha);
                 try (ResultSet rs = stmt.executeQuery()){
-                    return rs.next();
+                    if (rs.next()) {
+                        return new Usuario(rs.getString("cpf"), rs.getString("nome"), rs.getString("email"), rs.getString("genero"));
+                    }
                 }
             }
+            return null;
     }
 }

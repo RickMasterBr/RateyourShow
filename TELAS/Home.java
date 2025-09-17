@@ -2,6 +2,10 @@ package TELAS;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
+import BD.Sessao;
+import BD.Usuario;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,7 +17,7 @@ import CLASSES.RoundedTextFieldPlaceholder;
 public class Home {
 
     private JFrame tela;
-    private String nomeUsuarioLogado = "Usuário"; // Isso viria do login
+    private Usuario u = Sessao.getUsuarioLogado();
 
     // --- CONSTRUTOR ---
     // Em uma aplicação real, você passaria o nome do usuário aqui
@@ -53,7 +57,7 @@ public class Home {
         headerPanel.setOpaque(false);
 
         // Mensagem de Boas-Vindas
-        JLabel lblBemVindo = new JLabel("Olá, " + nomeUsuarioLogado + "!");
+        JLabel lblBemVindo = new JLabel("Olá, " + u.getNome() + "!");
         lblBemVindo.setForeground(Color.WHITE);
         lblBemVindo.setFont(new Font("Montserrat", Font.BOLD, 22));
 
@@ -75,6 +79,8 @@ public class Home {
             public void mouseClicked(MouseEvent e) {
                 // new Perfil(usuario); // Abre a tela de perfil
                  JOptionPane.showMessageDialog(tela, "Abrindo tela de Perfil...");
+                 tela.dispose();
+                 new Perfil();
             }
         });
 
@@ -86,6 +92,7 @@ public class Home {
         lblSair.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                Sessao.encerrarSessao();
                 tela.dispose();
                 new Login();
             }

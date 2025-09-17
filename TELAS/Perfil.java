@@ -5,6 +5,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
 import javax.swing.*;
+
+import BD.Sessao;
+import BD.Usuario;
 import CLASSES.BackgroundPanel;
 import CLASSES.RoundedButton;
 import CLASSES.RoundedComboBox;
@@ -22,11 +25,12 @@ public class Perfil {
     private RoundedButton btnAlterarDados, btnExcluirConta;
     private ImageIcon iconUsuario, iconLogo;
     private Dimension novaAltura = new Dimension(250, 40); // Dimensão padrão para os campos
+    private Usuario u = Sessao.getUsuarioLogado();
 
     // Dados do usuário (idealmente, seriam passados como parâmetros no construtor)
-    private String emailUsuarioLogado = "steff@rateyourshow.com";
-    private String nomeUsuarioLogado = "usuario_0";
-    private String generoUsuarioLogado = "Homem cis";
+    private String emailUsuarioLogado = u.getEmail();
+    private String nomeUsuarioLogado = u.getNome();
+    private String generoUsuarioLogado = u.getGenero();
 
     public Perfil() {
         tela = new JFrame("RateyourShow - Perfil");
@@ -76,7 +80,7 @@ public class Perfil {
         linkSair.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Lógica para logout
+                Sessao.encerrarSessao();
                 tela.dispose();
                 new Login();
             }
@@ -102,6 +106,8 @@ public class Perfil {
 
         txtemail = new RoundedTextFieldPlaceholder(22, "");
         txtemail.setPreferredSize(novaAltura);
+        txtemail.setText(emailUsuarioLogado);
+        txtemail.setEnabled(false);
         gbc.gridy = linha++;
         formPanel.add(txtemail, gbc);
 
@@ -114,6 +120,8 @@ public class Perfil {
 
         txtnomeusuario = new RoundedTextFieldPlaceholder(22, "");
         txtnomeusuario.setPreferredSize(novaAltura);
+        txtnomeusuario.setText(nomeUsuarioLogado);
+        txtnomeusuario.setEnabled(false);
         gbc.gridy = linha++;
         formPanel.add(txtnomeusuario, gbc);
 
@@ -126,6 +134,7 @@ public class Perfil {
 
         jpsenha = new RoundedPasswordField(22);
         jpsenha.setPreferredSize(novaAltura);
+        jpsenha.setEnabled(false);
         gbc.gridy = linha++;
         formPanel.add(jpsenha, gbc);
 
@@ -139,6 +148,7 @@ public class Perfil {
         genero = new RoundedComboBox<>(new String[]{ " -- Selecione o Gênero -- ", "Masculino", "Feminino", "Outro" });
         genero.setSelectedItem(generoUsuarioLogado);
         genero.setPreferredSize(novaAltura);
+        genero.setEnabled(false);
         gbc.gridy = linha++;
         formPanel.add(genero, gbc);
 
@@ -176,6 +186,10 @@ public class Perfil {
         btnAlterarDados.addActionListener(e -> {
             // Lógica futura aqui
             lblAviso.setText("Funcionalidade 'Alterar dados' em desenvolvimento.");
+            txtnomeusuario.setEnabled(true);
+            txtemail.setEnabled(true);
+            jpsenha.setEnabled(true);
+            genero.setEnabled(true);
         });
 
         btnExcluirConta.addActionListener(e -> {

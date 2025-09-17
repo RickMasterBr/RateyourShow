@@ -7,6 +7,6 @@ import javax.swing.JOptionPane;
 import TELAS.Home;
 public class Default {
     public static void main(String[] args) {
-        new cadastro();
+        new Login();
     }
 }
