@@ -8,7 +8,6 @@ import CLASSES.RoundedButton;
 import CLASSES.RoundedPasswordField;
 import CLASSES.RoundedPanel;
 import CLASSES.RoundedTextFieldPlaceholder;
-import CLASSES.ThemeManager;
 import java.net.URL;
 
 public class Login {
@@ -91,6 +90,31 @@ public class Login {
         gbcDireita.weightx = 1.0;
         
         int linha = 0;
+
+        // **LOGO ADICIONADA E REDIMENSIONADA**
+        URL urlLogo = getClass().getResource("/TELAS/img/logoDark.png");
+        if (urlLogo != null) {
+            ImageIcon originalIcon = new ImageIcon(urlLogo);
+            Image originalImage = originalIcon.getImage();
+            
+            int newWidth = 250; // Largura desejada
+            // Calcula a nova altura mantendo a proporção
+            int newHeight = (originalIcon.getIconHeight() * newWidth) / originalIcon.getIconWidth();
+            
+            Image scaledImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+            
+            JLabel lblLogo = new JLabel(new ImageIcon(scaledImage));
+            gbcDireita.gridy = linha++;
+            gbcDireita.anchor = GridBagConstraints.CENTER;
+            gbcDireita.fill = GridBagConstraints.NONE;
+            gbcDireita.insets = new Insets(5, 0, 20, 0); // Espaço abaixo da logo
+            painelDireita.add(lblLogo, gbcDireita);
+        }
+        
+        // Resetando constraints para os próximos componentes
+        gbcDireita.fill = GridBagConstraints.HORIZONTAL;
+        gbcDireita.anchor = GridBagConstraints.WEST;
+        gbcDireita.insets = new Insets(5, 0, 5, 0);
         
         JLabel lblTituloDireita = new JLabel("Acesse sua Conta");
         lblTituloDireita.setFont(new Font("Montserrat", Font.BOLD, 32));
@@ -154,8 +178,6 @@ public class Login {
         // --- MONTAGEM FINAL ---
         tela.add(painelEsquerda);
         tela.add(painelDireita);
-
-        ThemeManager.applyTheme(tela);
 
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);

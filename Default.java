@@ -4,7 +4,6 @@ import TELAS.Perfil;
 import TELAS.Home;
 public class Default {
     public static void main(String[] args) {
-        new cadastro();
-        new Home();
+        new Login();
     }
 }

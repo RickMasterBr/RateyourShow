@@ -7,7 +7,7 @@ import java.net.URL;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import BD.UsuarioDAO;
-import CLASSES.BackgroundPanel; // <<< Importante ter esta classe no seu projeto
+import CLASSES.BackgroundPanel;
 import CLASSES.RoundedButton;
 import CLASSES.RoundedComboBox;
 import CLASSES.RoundedPasswordField;
@@ -38,11 +38,9 @@ public class cadastro {
         // PAINEL DA ESQUERDA (COM IMAGEM DE FUNDO SEM DISTORÇÃO)
         // =====================================================================
         
-        // Carrega a imagem de fundo
-        URL urlFundo = getClass().getResource("/TELAS/img/background3.jpg"); // Sua nova imagem
+        URL urlFundo = getClass().getResource("/TELAS/img/background3.jpg");
         Image imagemFundo = new ImageIcon(urlFundo).getImage();
         
-        // Usa a classe BackgroundPanel que já corrige a distorção
         BackgroundPanel painelEsquerda = new BackgroundPanel(imagemFundo);
         painelEsquerda.setLayout(new GridBagLayout());
         painelEsquerda.setBorder(new EmptyBorder(20, 40, 20, 40));
@@ -51,24 +49,20 @@ public class cadastro {
         gbcEsquerda.gridwidth = GridBagConstraints.REMAINDER;
         gbcEsquerda.anchor = GridBagConstraints.CENTER;
         
-        // --- Conteúdo do Painel Esquerdo ---
         JPanel conteudoEsquerda = new JPanel();
         conteudoEsquerda.setLayout(new BoxLayout(conteudoEsquerda, BoxLayout.Y_AXIS));
         conteudoEsquerda.setOpaque(false);
 
-        // Título "Bem-vindo!"
         JLabel lblTituloEsquerda = new JLabel("Bem-vindo!");
         lblTituloEsquerda.setFont(new Font("Montserrat", Font.BOLD, 36));
-        lblTituloEsquerda.setForeground(Color.WHITE); // Alterado para branco
+        lblTituloEsquerda.setForeground(Color.WHITE);
         lblTituloEsquerda.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Subtítulo
         JLabel lblSubtituloEsquerda = new JLabel("Já possui uma conta? Acesse agora mesmo.");
         lblSubtituloEsquerda.setFont(new Font("Montserrat", Font.PLAIN, 14));
-        lblSubtituloEsquerda.setForeground(Color.WHITE); // Alterado para branco
+        lblSubtituloEsquerda.setForeground(Color.WHITE);
         lblSubtituloEsquerda.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Botão de Entrar (Login)
         RoundedButton btnEntrar = new RoundedButton("ENTRAR");
         btnEntrar.setFont(new Font("Montserrat", Font.BOLD, 16));
         btnEntrar.setBackground(COR_BOTAO_ESQUERDA);
@@ -82,7 +76,6 @@ public class cadastro {
             new Login();
         });
 
-        // Adicionando componentes
         conteudoEsquerda.add(lblTituloEsquerda);
         conteudoEsquerda.add(Box.createRigidArea(new Dimension(0, 10)));
         conteudoEsquerda.add(lblSubtituloEsquerda);
@@ -90,7 +83,6 @@ public class cadastro {
         conteudoEsquerda.add(btnEntrar);
 
         painelEsquerda.add(conteudoEsquerda, gbcEsquerda);
-
 
         // =====================================================================
         // PAINEL DA DIREITA (FORMULÁRIO DE CADASTRO)
@@ -106,9 +98,32 @@ public class cadastro {
         gbcDireita.weightx = 1.0;
 
         int linha = 0;
+        
+        // **LOGO ADICIONADA E REDIMENSIONADA**
+        URL urlLogo = getClass().getResource("/TELAS/img/logoDark.png");
+        if (urlLogo != null) {
+            ImageIcon originalIcon = new ImageIcon(urlLogo);
+            Image originalImage = originalIcon.getImage();
 
-        // Título "Cria sua conta"
-        JLabel lblTituloDireita = new JLabel("Cria sua conta");
+            int newWidth = 250; // Largura desejada
+            int newHeight = (originalIcon.getIconHeight() * newWidth) / originalIcon.getIconWidth();
+            
+            Image scaledImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+            
+            JLabel lblLogo = new JLabel(new ImageIcon(scaledImage));
+            gbcDireita.gridy = linha++;
+            gbcDireita.anchor = GridBagConstraints.CENTER;
+            gbcDireita.fill = GridBagConstraints.NONE;
+            gbcDireita.insets = new Insets(5, 0, 20, 0); // Espaço abaixo da logo
+            painelDireita.add(lblLogo, gbcDireita);
+        }
+
+        // Resetando constraints para os próximos componentes
+        gbcDireita.fill = GridBagConstraints.HORIZONTAL;
+        gbcDireita.anchor = GridBagConstraints.WEST;
+        gbcDireita.insets = new Insets(5, 0, 5, 0);
+
+        JLabel lblTituloDireita = new JLabel("Crie sua conta");
         lblTituloDireita.setFont(new Font("Montserrat", Font.BOLD, 32));
         lblTituloDireita.setForeground(COR_TEXTO_PRINCIPAL);
         lblTituloDireita.setHorizontalAlignment(SwingConstants.CENTER);
@@ -117,7 +132,6 @@ public class cadastro {
         painelDireita.add(lblTituloDireita, gbcDireita);
         gbcDireita.insets = new Insets(5, 0, 5, 0);
 
-        // Campos do formulário
         txtnome = new RoundedTextFieldPlaceholder(20, "Nome completo");
         gbcDireita.gridy = linha++;
         painelDireita.add(criarCampoComIcone(txtnome, "/TELAS/img/icons/user.png"), gbcDireita);
@@ -218,12 +232,4 @@ public class cadastro {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        SwingUtilities.invokeLater(() -> new cadastro());
-    }
 }

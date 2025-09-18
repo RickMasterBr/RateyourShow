@@ -5,12 +5,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
 import CLASSES.BackgroundPanel;
 import CLASSES.RoundedButton;
 import CLASSES.RoundedComboBox;
 import CLASSES.RoundedPasswordField;
 import CLASSES.RoundedTextFieldPlaceholder;
-import CLASSES.RoundedPanel; // Importando nosso painel padrão
+import CLASSES.ThemeManager;
+import CLASSES.RoundedPanel;
 
 public class Perfil {
 
@@ -18,12 +21,11 @@ public class Perfil {
     private RoundedTextFieldPlaceholder txtemail, txtnomeusuario;
     private RoundedPasswordField jpsenha;
     private RoundedComboBox<String> genero;
-    private JLabel lblUsuario, lblEmail, lblNomeUsuario, lblSenha, lblGenero, lblAviso, lblLogo;
+    private JLabel lblUsuario, lblEmail, lblNomeUsuario, lblSenha, lblGenero, lblAviso;
     private RoundedButton btnAlterarDados, btnExcluirConta;
-    private ImageIcon iconUsuario, iconLogo;
-    private Dimension novaAltura = new Dimension(250, 40); // Dimensão padrão para os campos
+    private ImageIcon iconUsuario;
+    private Dimension novaAltura = new Dimension(250, 40);
 
-    // Dados do usuário (idealmente, seriam passados como parâmetros no construtor)
     private String emailUsuarioLogado = "steff@rateyourshow.com";
     private String nomeUsuarioLogado = "usuario_0";
     private String generoUsuarioLogado = "Homem cis";
@@ -36,7 +38,7 @@ public class Perfil {
         
         // --- ESTRUTURA PADRÃO ---
         // 1. Painel de Fundo
-        URL urlFundo = getClass().getResource("/TELAS/img/background.png");
+        URL urlFundo = getClass().getResource("/TELAS/img/background3.jg");
         Image imagemFundo = new ImageIcon(urlFundo).getImage();
         BackgroundPanel painelDeFundo = new BackgroundPanel(imagemFundo);
         painelDeFundo.setLayout(new GridBagLayout());
@@ -44,6 +46,7 @@ public class Perfil {
         // 2. Painel "Card" para o conteúdo
         RoundedPanel formPanel = new RoundedPanel(new GridBagLayout(), 20, new Color(100, 100, 100, 200));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        formPanel.setBackground(new Color(255, 255, 255, 0)); 
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 10, 5, 10); // Espaçamento entre componentes
@@ -172,6 +175,8 @@ public class Perfil {
         painelDeFundo.add(formPanel);
         tela.setContentPane(painelDeFundo);
         
+        ThemeManager.applyTheme(tela);
+
         // Ações
         btnAlterarDados.addActionListener(e -> {
             // Lógica futura aqui
