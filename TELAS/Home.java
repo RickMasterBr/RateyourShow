@@ -69,11 +69,7 @@ public class Home {
         JPanel userActionsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         userActionsPanel.setOpaque(false);
 
-        JButton btnToggleTheme = new JButton("🌙");
-        btnToggleTheme.setFont(new Font("Arial", Font.PLAIN, 20));
-        btnToggleTheme.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnToggleTheme.setFocusPainted(false);
-        btnToggleTheme.addActionListener(e -> ThemeManager.toggleDarkMode());
+
 
         JLabel lblIconPerfil = new JLabel("Perfil");
         try {
@@ -90,8 +86,6 @@ public class Home {
         lblIconPerfil.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // new Perfil(usuario);
-                JOptionPane.showMessageDialog(tela, "Abrindo tela de Perfil...");
                 tela.dispose();
                 new Perfil();
             }
@@ -110,7 +104,6 @@ public class Home {
             }
         });
 
-        userActionsPanel.add(btnToggleTheme);
         userActionsPanel.add(lblIconPerfil);
         userActionsPanel.add(lblSair);
 

@@ -40,7 +40,7 @@ public class UsuarioDAO {
     }
 
     public void atualizar(String cpf, String email, String nome, String senha, String genero) throws Exception{
-        StringBuilder sql = new StringBuilder("UPDATE usuarios SET ");
+        StringBuilder sql = new StringBuilder("UPDATE usuario SET ");
         ArrayList<Object> parametros = new ArrayList<>();
 
         if (email != null && !email.isBlank()) {
@@ -82,5 +82,17 @@ public class UsuarioDAO {
         }
     }
 
-    
+    public void excluir(String cpf) throws Exception{
+        String sql = "DELETE from usuario WHERE cpf = ?";
+        try(Connection conn = conexao.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+                stmt.setString(1, cpf);
+
+                int linhasAfetadas = stmt.executeUpdate();
+                if (linhasAfetadas == 0) {
+                    throw new Exception("Nenhum usuário encontrado com o CPF informado.");
+                }
+                }
+    }
 }
+

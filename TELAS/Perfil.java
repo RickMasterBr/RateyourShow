@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 
 import BD.Sessao;
 import BD.Usuario;
+import BD.UsuarioDAO;
 import CLASSES.BackgroundPanel;
 import CLASSES.RoundedButton;
 import CLASSES.RoundedComboBox;
@@ -28,12 +29,14 @@ public class Perfil {
     private ImageIcon iconUsuario;
     private Dimension novaAltura = new Dimension(250, 40);
     private Usuario u = Sessao.getUsuarioLogado();
+    private UsuarioDAO dao;
 
     private String emailUsuarioLogado = u.getEmail();
     private String nomeUsuarioLogado = u.getNome();
     private String generoUsuarioLogado = u.getGenero();
 
     public Perfil() {
+        dao = new UsuarioDAO();
         tela = new JFrame("RateyourShow - Perfil");
         tela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         tela.setSize(800, 700); // Padronizando o tamanho da janela
@@ -110,7 +113,6 @@ public class Perfil {
         txtemail = new RoundedTextFieldPlaceholder(22, "");
         txtemail.setPreferredSize(novaAltura);
         txtemail.setText(emailUsuarioLogado);
-        txtemail.setEnabled(false);
         gbc.gridy = linha++;
         formPanel.add(txtemail, gbc);
 
@@ -124,7 +126,6 @@ public class Perfil {
         txtnomeusuario = new RoundedTextFieldPlaceholder(22, "");
         txtnomeusuario.setPreferredSize(novaAltura);
         txtnomeusuario.setText(nomeUsuarioLogado);
-        txtnomeusuario.setEnabled(false);
         gbc.gridy = linha++;
         formPanel.add(txtnomeusuario, gbc);
 
@@ -137,7 +138,6 @@ public class Perfil {
 
         jpsenha = new RoundedPasswordField(22);
         jpsenha.setPreferredSize(novaAltura);
-        jpsenha.setEnabled(false);
         gbc.gridy = linha++;
         formPanel.add(jpsenha, gbc);
 
@@ -151,7 +151,6 @@ public class Perfil {
         genero = new RoundedComboBox<>(new String[]{ " -- Selecione o Gênero -- ", "Masculino", "Feminino", "Outro" });
         genero.setSelectedItem(generoUsuarioLogado);
         genero.setPreferredSize(novaAltura);
-        genero.setEnabled(false);
         gbc.gridy = linha++;
         formPanel.add(genero, gbc);
 
@@ -189,12 +188,18 @@ public class Perfil {
 
         // Ações
         btnAlterarDados.addActionListener(e -> {
-            // Lógica futura aqui
-            lblAviso.setText("Funcionalidade 'Alterar dados' em desenvolvimento.");
-            txtnomeusuario.setEnabled(true);
-            txtemail.setEnabled(true);
-            jpsenha.setEnabled(true);
-            genero.setEnabled(true);
+            try {
+                String cpf = u.getCpf();
+                String email = txtemail.getText();
+                String nome = txtnomeusuario.getText();
+                String senha = new String(jpsenha.getPassword());
+                String generoNovo = genero.getSelectedItem().toString();
+                dao.atualizar(cpf, email, nome, senha, generoNovo);
+                JOptionPane.showMessageDialog(tela, "Dados atualizados com sucesso!");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(tela, "Erro: " + ex);
+            }
+
         });
 
         btnExcluirConta.addActionListener(e -> {
@@ -206,7 +211,17 @@ public class Perfil {
                 JOptionPane.WARNING_MESSAGE);
             
             if (confirm == JOptionPane.YES_OPTION) {
-                lblAviso.setText("Funcionalidade 'Excluir conta' em desenvolvimento.");
+                try {
+                    String cpf = u.getCpf();
+                    dao.excluir(cpf);
+                    Sessao.encerrarSessao();
+                    JOptionPane.showMessageDialog(tela, "Conta excluída com sucesso!");
+
+                    tela.dispose();
+                    new Login();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(tela, "Erro: " + ex);
+                }
             }
         });
 
