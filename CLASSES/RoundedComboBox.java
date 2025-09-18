@@ -18,7 +18,6 @@ public class RoundedComboBox<E> extends JComboBox<E> {
         setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         setUI(new RoundedComboBoxUI());
 
-        // 🔹 Deixa o combo com altura semelhante ao RoundedPasswordField
         setPreferredSize(new Dimension(200, 35));
 
         // Renderer para o valor exibido

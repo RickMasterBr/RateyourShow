@@ -13,78 +13,90 @@ import java.net.URL;
 import CLASSES.BackgroundPanel;
 import CLASSES.RoundedPanel;
 import CLASSES.RoundedTextFieldPlaceholder;
+import CLASSES.ThemeManager;
 
 public class Home {
 
     private JFrame tela;
     private Usuario u = Sessao.getUsuarioLogado();
 
-    // --- CONSTRUTOR ---
-    // Em uma aplicação real, você passaria o nome do usuário aqui
-    // Ex: public Home(String nomeUsuario) { ... }
     public Home() {
         tela = new JFrame("RateyourShow - Home");
         tela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tela.setSize(1000, 750); // Uma tela maior para a home
+        tela.setSize(1200, 800); // Aumentei um pouco para o novo layout
         tela.setResizable(false);
+        tela.setLayout(new GridLayout(1, 2)); // << LAYOUT DIVIDIDO
 
-        // 1. Painel de Fundo
-        URL urlFundo = getClass().getResource("/TELAS/img/background.png");
+        // =====================================================================
+        // PAINEL DA ESQUERDA (VISUAL)
+        // =====================================================================
+        URL urlFundo = getClass().getResource("/TELAS/img/background3.jpg");
         Image imagemFundo = new ImageIcon(urlFundo).getImage();
-        BackgroundPanel painelDeFundo = new BackgroundPanel(imagemFundo);
-        painelDeFundo.setLayout(new GridBagLayout());
+        BackgroundPanel painelEsquerda = new BackgroundPanel(imagemFundo);
+        painelEsquerda.setLayout(new GridBagLayout());
+        
+        JLabel lblWelcome = new JLabel("RateYourShow");
+        lblWelcome.setFont(new Font("Montserrat", Font.BOLD, 48));
+        lblWelcome.setForeground(Color.WHITE);
+        painelEsquerda.add(lblWelcome); // Adiciona o texto de boas-vindas
 
-        // 2. Painel "Card" Principal
-        RoundedPanel mainPanel = new RoundedPanel(new BorderLayout(20, 20), 20, new Color(50, 50, 50, 210));
-        mainPanel.setBorder(new EmptyBorder(20, 25, 20, 25)); // Padding interno
-        
-        // --- Montagem dos Componentes ---
-        
-        mainPanel.add(createHeaderPanel(), BorderLayout.NORTH);
-        mainPanel.add(createContentPanel(), BorderLayout.CENTER);
-        
-        // Adiciona o card ao fundo para centralização
-        painelDeFundo.add(mainPanel);
-        tela.setContentPane(painelDeFundo);
-        
+        // =====================================================================
+        // PAINEL DA DIREITA (CONTEÚDO PRINCIPAL)
+        // =====================================================================
+        JPanel painelDireita = new JPanel(new BorderLayout(20, 15));
+        painelDireita.setBorder(new EmptyBorder(20, 25, 20, 25));
+
+        painelDireita.add(createHeaderPanel(), BorderLayout.NORTH);
+        painelDireita.add(createContentPanel(), BorderLayout.CENTER);
+
+        // --- MONTAGEM FINAL ---
+        tela.add(painelEsquerda);
+        tela.add(painelDireita);
+
+        ThemeManager.applyTheme(tela);
+
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
     }
 
-    // --- PAINEL DO CABEÇALHO ---
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setOpaque(false);
 
-        // Mensagem de Boas-Vindas
         JLabel lblBemVindo = new JLabel("Olá, " + u.getNome() + "!");
-        lblBemVindo.setForeground(Color.WHITE);
         lblBemVindo.setFont(new Font("Montserrat", Font.BOLD, 22));
 
-        // Painel de Ações do Usuário (Perfil e Sair)
         JPanel userActionsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         userActionsPanel.setOpaque(false);
+
+        JButton btnToggleTheme = new JButton("🌙");
+        btnToggleTheme.setFont(new Font("Arial", Font.PLAIN, 20));
+        btnToggleTheme.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnToggleTheme.setFocusPainted(false);
+        btnToggleTheme.addActionListener(e -> ThemeManager.toggleDarkMode());
+
+        JLabel lblIconPerfil = new JLabel("Perfil");
+        try {
+            URL urlUsuario = getClass().getResource("/TELAS/img/usuario.png");
+            if (urlUsuario != null) {
+                ImageIcon originalIcon = new ImageIcon(urlUsuario);
+                Image scaledImage = originalIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+                lblIconPerfil.setIcon(new ImageIcon(scaledImage));
+            }
+        } catch(Exception e) {}
         
-        // Ícone/Botão de Perfil
-        URL urlUsuario = getClass().getResource("/TELAS/img/usuario.png");
-        ImageIcon originalIcon = new ImageIcon(urlUsuario);
-        Image scaledImage = originalIcon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
-        JLabel lblIconPerfil = new JLabel(new ImageIcon(scaledImage));
-        lblIconPerfil.setText("Perfil");
-        lblIconPerfil.setForeground(Color.WHITE);
         lblIconPerfil.setFont(new Font("Montserrat", Font.BOLD, 14));
         lblIconPerfil.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblIconPerfil.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // new Perfil(usuario); // Abre a tela de perfil
-                 JOptionPane.showMessageDialog(tela, "Abrindo tela de Perfil...");
-                 tela.dispose();
-                 new Perfil();
+                // new Perfil(usuario);
+                JOptionPane.showMessageDialog(tela, "Abrindo tela de Perfil...");
+                tela.dispose();
+                new Perfil();
             }
         });
 
-        // Botão Sair
         JLabel lblSair = new JLabel("Sair");
         lblSair.setForeground(Color.YELLOW);
         lblSair.setFont(new Font("Montserrat", Font.BOLD, 14));
@@ -98,22 +110,21 @@ public class Home {
             }
         });
 
+        userActionsPanel.add(btnToggleTheme);
         userActionsPanel.add(lblIconPerfil);
         userActionsPanel.add(lblSair);
-        
+
         headerPanel.add(lblBemVindo, BorderLayout.WEST);
         headerPanel.add(userActionsPanel, BorderLayout.EAST);
-        
+
         return headerPanel;
     }
 
-    // --- PAINEL DE CONTEÚDO PRINCIPAL ---
-    private JPanel createContentPanel() {
+    private JScrollPane createContentPanel() {
         JPanel contentPanel = new JPanel();
         contentPanel.setOpaque(false);
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS)); // Layout vertical
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
-        // Barra de Pesquisa
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         searchPanel.setOpaque(false);
         searchPanel.setBorder(new EmptyBorder(20, 0, 40, 0));
@@ -122,73 +133,59 @@ public class Home {
         txtPesquisa.setFont(new Font("Montserrat", Font.PLAIN, 16));
         searchPanel.add(txtPesquisa);
 
-        // Seção de Destaques
-        JPanel destaquesPanel = createSectionPanel("Shows em Destaque");
-        // Adicionando placeholders de conteúdo
-        destaquesPanel.add(createShowCard("Show A"));
-        destaquesPanel.add(Box.createHorizontalStrut(20)); // Espaçador
-        destaquesPanel.add(createShowCard("Show B"));
-        destaquesPanel.add(Box.createHorizontalStrut(20));
-        destaquesPanel.add(createShowCard("Show C"));
-        destaquesPanel.add(Box.createHorizontalStrut(20));
-        destaquesPanel.add(createShowCard("Show D"));
-
-        // Seção de Avaliações
-        JPanel avaliacoesPanel = createSectionPanel("Suas Avaliações Recentes");
-        avaliacoesPanel.add(createShowCard("Série X"));
-        avaliacoesPanel.add(Box.createHorizontalStrut(20));
-        avaliacoesPanel.add(createShowCard("Filme Y"));
-
+        // Adicionando os painéis de seção
         contentPanel.add(searchPanel);
-        contentPanel.add(destaquesPanel);
-        contentPanel.add(Box.createVerticalStrut(20)); // Espaçador vertical
-        contentPanel.add(avaliacoesPanel);
+        contentPanel.add(createSectionPanel("Shows em Destaque", new String[]{"Show A", "Show B", "Show C", "Show D"}));
+        contentPanel.add(Box.createVerticalStrut(20));
+        contentPanel.add(createSectionPanel("Suas Avaliações", new String[]{"Série X", "Filme Y"}));
+        
+        // Adiciona um painel de rolagem
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setBorder(null);
 
-        return contentPanel;
+        return scrollPane;
     }
 
-    // --- MÉTODO AUXILIAR PARA CRIAR SEÇÕES ---
-    private JPanel createSectionPanel(String title) {
+    private JPanel createSectionPanel(String title, String[] items) {
         JPanel section = new JPanel();
         section.setOpaque(false);
-        section.setLayout(new BoxLayout(section, BoxLayout.Y_AXIS));
+        section.setLayout(new BorderLayout(0, 10));
         section.setAlignmentX(Component.LEFT_ALIGNMENT);
-
+        
         JLabel lblTitle = new JLabel(title);
-        lblTitle.setForeground(Color.WHITE);
         lblTitle.setFont(new Font("Montserrat", Font.BOLD, 18));
         lblTitle.setBorder(new EmptyBorder(0, 5, 10, 0));
         
-        JPanel content = new JPanel();
+        JPanel content = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
         content.setOpaque(false);
-        content.setLayout(new BoxLayout(content, BoxLayout.X_AXIS));
-        content.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
-        section.add(lblTitle);
-        section.add(content);
 
-        return content; // Retorna o painel de conteúdo para adicionar os cards
+        for (String itemTitle : items) {
+            content.add(createShowCard(itemTitle));
+        }
+        
+        section.add(lblTitle, BorderLayout.NORTH);
+        section.add(content, BorderLayout.CENTER);
+
+        return section;
     }
 
-    // --- MÉTODO AUXILIAR PARA CRIAR "CARDS" DE SHOW (PLACEHOLDER) ---
     private JPanel createShowCard(String showTitle) {
         JPanel card = new JPanel();
-        card.setOpaque(false);
+        card.setOpaque(true); // O card em si precisa ter uma cor
         card.setLayout(new BorderLayout());
         card.setBorder(BorderFactory.createLineBorder(new Color(80, 80, 80)));
         card.setPreferredSize(new Dimension(180, 250));
         card.setMaximumSize(new Dimension(180, 250));
-
-        // Placeholder para a imagem do poster
+        
         JLabel lblPoster = new JLabel("Poster", SwingConstants.CENTER);
         lblPoster.setOpaque(true);
         lblPoster.setBackground(new Color(70, 70, 70));
         lblPoster.setForeground(Color.LIGHT_GRAY);
         lblPoster.setFont(new Font("Montserrat", Font.ITALIC, 16));
-
-        // Título do show
+        
         JLabel lblTitle = new JLabel(showTitle, SwingConstants.CENTER);
-        lblTitle.setForeground(Color.WHITE);
         lblTitle.setFont(new Font("Montserrat", Font.BOLD, 14));
         lblTitle.setBorder(new EmptyBorder(10, 5, 10, 5));
 
