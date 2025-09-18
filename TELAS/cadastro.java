@@ -1,15 +1,17 @@
 package TELAS;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.URL;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import BD.UsuarioDAO;
 import CLASSES.BackgroundPanel;
 import CLASSES.RoundedButton;
 import CLASSES.RoundedComboBox;
 import CLASSES.RoundedPasswordField;
 import CLASSES.RoundedTextFieldPlaceholder;
-import CLASSES.RoundedPanel;
 
 public class cadastro {
 
@@ -17,201 +19,184 @@ public class cadastro {
     private RoundedTextFieldPlaceholder txtcpf, txtnome, txtemail;
     private RoundedPasswordField jpsenha;
     private RoundedComboBox<String> genero;
-    private JLabel lblimagem, lblmsn, lblmsn2, lblcpf, lblnome, lblemail, lblsenha, lblgenero;
-    private JLabel lblTitulo;
-    private JLabel lblFeedback; 
-    private RoundedButton btnconfirmar;
-    private ImageIcon iconLogo;
-    private Dimension novaAltura = new Dimension(200, 38);
+    private JLabel lblFeedback;
+    private RoundedButton btnCadastrar;
+
+    // --- CORES ---
+    private final Color COR_BOTAO_ESQUERDA = new Color(50, 180, 120);
+    private final Color COR_TEXTO_PRINCIPAL = new Color(60, 60, 60);
+    private final Color COR_TEXTO_SECUNDARIO = new Color(120, 120, 120);
 
     public cadastro() {
         tela = new JFrame("Cadastro de Usuários");
         tela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Ajustado para um tamanho que acomode bem o card
-        tela.setSize(1000, 700); 
+        tela.setSize(1000, 700);
         tela.setResizable(false);
+        tela.setLayout(new GridLayout(1, 2));
 
-        URL urlFundo = getClass().getResource("/TELAS/img/background.png");
+        // =====================================================================
+        // PAINEL DA ESQUERDA (COM IMAGEM DE FUNDO SEM DISTORÇÃO)
+        // =====================================================================
+        
+        URL urlFundo = getClass().getResource("/TELAS/img/background3.jpg");
         Image imagemFundo = new ImageIcon(urlFundo).getImage();
-        BackgroundPanel painelDeFundo = new BackgroundPanel(imagemFundo);
-        painelDeFundo.setLayout(new GridBagLayout());
+        
+        BackgroundPanel painelEsquerda = new BackgroundPanel(imagemFundo);
+        painelEsquerda.setLayout(new GridBagLayout());
+        painelEsquerda.setBorder(new EmptyBorder(20, 40, 20, 40));
 
-        // Corrigido a cor do painel para corresponder ao seu código mais recente
-        RoundedPanel formPanel = new RoundedPanel(new GridBagLayout(), 20, new Color(100, 100, 100, 200));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        GridBagConstraints gbcEsquerda = new GridBagConstraints();
+        gbcEsquerda.gridwidth = GridBagConstraints.REMAINDER;
+        gbcEsquerda.anchor = GridBagConstraints.CENTER;
+        
+        JPanel conteudoEsquerda = new JPanel();
+        conteudoEsquerda.setLayout(new BoxLayout(conteudoEsquerda, BoxLayout.Y_AXIS));
+        conteudoEsquerda.setOpaque(false);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JLabel lblTituloEsquerda = new JLabel("Bem-vindo!");
+        lblTituloEsquerda.setFont(new Font("Montserrat", Font.BOLD, 36));
+        lblTituloEsquerda.setForeground(Color.WHITE);
+        lblTituloEsquerda.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblSubtituloEsquerda = new JLabel("Já possui uma conta? Acesse agora mesmo.");
+        lblSubtituloEsquerda.setFont(new Font("Montserrat", Font.PLAIN, 14));
+        lblSubtituloEsquerda.setForeground(Color.WHITE);
+        lblSubtituloEsquerda.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        RoundedButton btnEntrar = new RoundedButton("ENTRAR");
+        btnEntrar.setFont(new Font("Montserrat", Font.BOLD, 16));
+        btnEntrar.setBackground(COR_BOTAO_ESQUERDA);
+        btnEntrar.setForeground(Color.WHITE);
+        btnEntrar.setPreferredSize(new Dimension(200, 50));
+        btnEntrar.setMaximumSize(new Dimension(200, 50));
+        btnEntrar.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnEntrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnEntrar.addActionListener(e -> {
+            tela.dispose();
+            new Login();
+        });
+
+        conteudoEsquerda.add(lblTituloEsquerda);
+        conteudoEsquerda.add(Box.createRigidArea(new Dimension(0, 10)));
+        conteudoEsquerda.add(lblSubtituloEsquerda);
+        conteudoEsquerda.add(Box.createRigidArea(new Dimension(0, 30)));
+        conteudoEsquerda.add(btnEntrar);
+
+        painelEsquerda.add(conteudoEsquerda, gbcEsquerda);
+
+        // =====================================================================
+        // PAINEL DA DIREITA (FORMULÁRIO DE CADASTRO)
+        // =====================================================================
+        JPanel painelDireita = new JPanel(new GridBagLayout());
+        painelDireita.setBackground(Color.WHITE);
+        painelDireita.setBorder(new EmptyBorder(40, 60, 40, 60));
+
+        GridBagConstraints gbcDireita = new GridBagConstraints();
+        gbcDireita.gridx = 0;
+        gbcDireita.fill = GridBagConstraints.HORIZONTAL;
+        gbcDireita.insets = new Insets(5, 0, 5, 0);
+        gbcDireita.weightx = 1.0;
 
         int linha = 0;
-
-        // --- CORREÇÃO: Centralizando a Logo ---
-        // Usando o método seguro para carregar a imagem
-        URL urlLogo = getClass().getResource("/TELAS/img/logo.png");
+        
+        // **LOGO ADICIONADA E REDIMENSIONADA**
+        URL urlLogo = getClass().getResource("/TELAS/img/logoDark.png");
         if (urlLogo != null) {
-            iconLogo = new ImageIcon(urlLogo);
+            ImageIcon originalIcon = new ImageIcon(urlLogo);
+            Image originalImage = originalIcon.getImage();
+
+            int newWidth = 250; // Largura desejada
+            int newHeight = (originalIcon.getIconHeight() * newWidth) / originalIcon.getIconWidth();
+            
+            Image scaledImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+            
+            JLabel lblLogo = new JLabel(new ImageIcon(scaledImage));
+            gbcDireita.gridy = linha++;
+            gbcDireita.anchor = GridBagConstraints.CENTER;
+            gbcDireita.fill = GridBagConstraints.NONE;
+            gbcDireita.insets = new Insets(5, 0, 20, 0); // Espaço abaixo da logo
+            painelDireita.add(lblLogo, gbcDireita);
         }
-        lblimagem = new JLabel(iconLogo);
-        gbc.gridwidth = 2; // Ocupa as 2 colunas
-        gbc.gridx = 0;
-        gbc.gridy = linha++;
-        gbc.anchor = GridBagConstraints.CENTER; // Define a âncora para o centro
-        gbc.fill = GridBagConstraints.NONE; // Para não esticar a imagem
-        gbc.insets = new Insets(5, 5, 15, 5);
-        formPanel.add(lblimagem, gbc);
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Retorna ao padrão
-        gbc.insets = new Insets(5, 5, 5, 5);
 
-        // Título principal
-        lblTitulo = new JLabel("Crie sua Conta");
-        lblTitulo.setForeground(Color.WHITE);
-        lblTitulo.setFont(new Font("Montserrat", Font.BOLD, 28));
-        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridx = 0;
-        gbc.gridy = linha++;
-        gbc.insets = new Insets(5, 5, 20, 5);
-        formPanel.add(lblTitulo, gbc);
-        gbc.insets = new Insets(5, 5, 5, 5);
+        // Resetando constraints para os próximos componentes
+        gbcDireita.fill = GridBagConstraints.HORIZONTAL;
+        gbcDireita.anchor = GridBagConstraints.WEST;
+        gbcDireita.insets = new Insets(5, 0, 5, 0);
+
+        JLabel lblTituloDireita = new JLabel("Crie sua conta");
+        lblTituloDireita.setFont(new Font("Montserrat", Font.BOLD, 32));
+        lblTituloDireita.setForeground(COR_TEXTO_PRINCIPAL);
+        lblTituloDireita.setHorizontalAlignment(SwingConstants.CENTER);
+        gbcDireita.gridy = linha++;
+        gbcDireita.insets = new Insets(5, 0, 20, 0);
+        painelDireita.add(lblTituloDireita, gbcDireita);
+        gbcDireita.insets = new Insets(5, 0, 5, 0);
+
+        txtnome = new RoundedTextFieldPlaceholder(20, "Nome completo");
+        gbcDireita.gridy = linha++;
+        painelDireita.add(criarCampoComIcone(txtnome, "/TELAS/img/icons/user.png"), gbcDireita);
+
+        txtcpf = new RoundedTextFieldPlaceholder(20, "CPF (apenas números)");
+        gbcDireita.gridy = linha++;
+        painelDireita.add(criarCampoComIcone(txtcpf, "/TELAS/img/icons/cpf.png"), gbcDireita);
+
+        txtemail = new RoundedTextFieldPlaceholder(20, "Email");
+        gbcDireita.gridy = linha++;
+        painelDireita.add(criarCampoComIcone(txtemail, "/TELAS/img/icons/email.png"), gbcDireita);
+
+        jpsenha = new RoundedPasswordField(20);
+        gbcDireita.gridy = linha++;
+        painelDireita.add(criarCampoComIcone(jpsenha, "/TELAS/img/icons/lock.png"), gbcDireita);
+
+        genero = new RoundedComboBox<>(new String[]{" -- Selecione o Gênero -- ", "Masculino", "Feminino", "Outro"});
+        gbcDireita.gridy = linha++;
+        painelDireita.add(genero, gbcDireita);
         
-        gbc.gridwidth = 1;
-
-        // (O resto do código continua exatamente o mesmo...)
-        // Nome
-        lblnome = new JLabel("Nome");
-        lblnome.setForeground(Color.WHITE);
-        lblnome.setFont(new Font("Montserrat", Font.PLAIN, 14));
-        gbc.gridx = 0;
-        gbc.gridy = linha;
-        gbc.anchor = GridBagConstraints.WEST;
-        formPanel.add(lblnome, gbc);
-
-        // CPF
-        lblcpf = new JLabel("CPF");
-        lblcpf.setForeground(Color.WHITE);
-        lblcpf.setFont(new Font("Montserrat", Font.PLAIN, 14));
-        gbc.gridx = 1;
-        gbc.gridy = linha++;
-        formPanel.add(lblcpf, gbc);
-
-        // Campo Nome
-        txtnome = new RoundedTextFieldPlaceholder(15, "Digite seu nome");
-        txtnome.setPreferredSize(novaAltura);
-        gbc.gridx = 0;
-        gbc.gridy = linha;
-        formPanel.add(txtnome, gbc);
-
-        // Campo CPF
-        txtcpf = new RoundedTextFieldPlaceholder(15, "Digite seu CPF");
-        txtcpf.setPreferredSize(novaAltura);
-        gbc.gridx = 1;
-        gbc.gridy = linha++;
-        formPanel.add(txtcpf, gbc);
-
-        // Email
-        lblemail = new JLabel("Email");
-        lblemail.setForeground(Color.WHITE);
-        lblemail.setFont(new Font("Montserrat", Font.PLAIN, 14));
-        gbc.gridx = 0;
-        gbc.gridy = linha++;
-        gbc.gridwidth = 2; // Ocupa duas colunas
-        formPanel.add(lblemail, gbc);
-
-        txtemail = new RoundedTextFieldPlaceholder(22, "Digite seu email");
-        txtemail.setPreferredSize(novaAltura);
-        gbc.gridx = 0;
-        gbc.gridy = linha++;
-        formPanel.add(txtemail, gbc);
-
-        // Senha
-        lblsenha = new JLabel("Senha");
-        lblsenha.setForeground(Color.WHITE);
-        lblsenha.setFont(new Font("Montserrat", Font.PLAIN, 14));
-        gbc.gridx = 0;
-        gbc.gridy = linha++;
-        formPanel.add(lblsenha, gbc);
-
-        jpsenha = new RoundedPasswordField(22);
-        jpsenha.setPreferredSize(novaAltura);
-        gbc.gridx = 0;
-        gbc.gridy = linha++;
-        formPanel.add(jpsenha, gbc);
-
-        // Gênero
-        lblgenero = new JLabel("Gênero");
-        lblgenero.setForeground(Color.WHITE);
-        lblgenero.setFont(new Font("Montserrat", Font.PLAIN, 14));
-        gbc.gridx = 0;
-        gbc.gridy = linha++;
-        formPanel.add(lblgenero, gbc);
-        
-        genero = new RoundedComboBox<>(new String[] { " -- Selecione o Gênero -- ", "Masculino", "Feminino", "Outro" });
-        genero.setPreferredSize(novaAltura); // Altura padronizada
-        gbc.gridx = 0;
-        gbc.gridy = linha++;
-        formPanel.add(genero, gbc);
-        gbc.gridwidth = 1;
-
-
-        // --- MELHORIA: Rótulo de Feedback (substitui JOptionPane) ---
-        lblFeedback = new JLabel(" "); // Começa com um espaço para ocupar altura
-        lblFeedback.setForeground(new Color(255, 100, 100)); // Cor de erro
+        lblFeedback = new JLabel(" ");
+        lblFeedback.setForeground(Color.RED);
         lblFeedback.setFont(new Font("Montserrat", Font.ITALIC, 12));
-        lblFeedback.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridwidth = 2;
-        gbc.gridx = 0;
-        gbc.gridy = linha++;
-        gbc.insets = new Insets(10, 5, 5, 5);
-        formPanel.add(lblFeedback, gbc);
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbcDireita.gridy = linha++;
+        painelDireita.add(lblFeedback, gbcDireita);
 
-        // Botão Confirmar
-        btnconfirmar = new RoundedButton("Cadastre-se");
-        gbc.gridx = 0;
-        gbc.gridy = linha++;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.fill = GridBagConstraints.NONE; // Para não esticar o botão
-        formPanel.add(btnconfirmar, gbc);
-        
-        // Link para Login
-        JPanel painelLoginLink = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
-        painelLoginLink.setOpaque(false);
-        lblmsn = new JLabel("Já está registrado?");
-        lblmsn.setForeground(Color.WHITE);
-        lblmsn.setFont(new Font("Montserrat", Font.PLAIN, 12));
-        lblmsn2 = new JLabel("Faça o login");
-        lblmsn2.setForeground(Color.YELLOW);
-        lblmsn2.setFont(new Font("Montserrat", Font.BOLD, 12));
-        lblmsn2.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        painelLoginLink.add(lblmsn);
-        painelLoginLink.add(lblmsn2);
-        gbc.gridx = 0;
-        gbc.gridy = linha++;
-        gbc.insets = new Insets(15, 5, 5, 5); // Espaço acima do link
-        formPanel.add(painelLoginLink, gbc);
+        btnCadastrar = new RoundedButton("CADASTRAR");
+        btnCadastrar.setFont(new Font("Montserrat", Font.BOLD, 16));
+        btnCadastrar.setBackground(COR_BOTAO_ESQUERDA);
+        btnCadastrar.setForeground(Color.WHITE);
+        btnCadastrar.setPreferredSize(new Dimension(0, 50));
+        gbcDireita.gridy = linha++;
+        gbcDireita.insets = new Insets(15, 0, 5, 0);
+        painelDireita.add(btnCadastrar, gbcDireita);
 
-        // --- MONTAGEM FINAL ---
-        // Adiciona o painel do formulário ao painel de fundo (que o centralizará)
-        painelDeFundo.add(formPanel);
+        btnCadastrar.addActionListener(e -> cadastrarUsuario());
         
-        // Define o painel de fundo como o conteúdo principal da tela
-        tela.setContentPane(painelDeFundo);
-        
-        // --- AÇÕES ---
-        btnconfirmar.addActionListener(e -> cadastrarUsuario());
-        
-        lblmsn2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                tela.dispose();
-                new Login();
-            }
-        });
+        tela.add(painelEsquerda);
+        tela.add(painelDireita);
 
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
     }
     
-    // --- MÉTODO DE CADASTRO refatorado para usar o lblFeedback ---
+    private JPanel criarCampoComIcone(JComponent campo, String caminhoIcone) {
+        JPanel painelCampo = new JPanel(new BorderLayout(10, 0));
+        painelCampo.setOpaque(false);
+        campo.setPreferredSize(new Dimension(100, 40));
+        try {
+            URL urlIcone = getClass().getResource(caminhoIcone);
+            if (urlIcone != null) {
+                ImageIcon iconeOriginal = new ImageIcon(urlIcone);
+                Image imagemRedimensionada = iconeOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                JLabel lblIcone = new JLabel(new ImageIcon(imagemRedimensionada));
+                lblIcone.setBorder(new EmptyBorder(0, 5, 0, 0));
+                painelCampo.add(lblIcone, BorderLayout.WEST);
+            }
+        } catch (Exception e) {
+            System.err.println("Ícone não encontrado: " + caminhoIcone);
+            painelCampo.add(Box.createRigidArea(new Dimension(25, 0)), BorderLayout.WEST);
+        }
+        painelCampo.add(campo, BorderLayout.CENTER);
+        return painelCampo;
+    }
+
     private void cadastrarUsuario() {
         String cpf = txtcpf.getText().trim();
         String nome = txtnome.getText().trim();
@@ -223,7 +208,7 @@ public class cadastro {
             lblFeedback.setText("Por favor, preencha todos os campos.");
             return;
         }
-        if (cpf.length() != 11 || !cpf.matches("\\d+")) { // Valida se tem 11 dígitos numéricos
+        if (cpf.length() != 11 || !cpf.matches("\\d+")) {
             lblFeedback.setText("CPF inválido! Deve conter 11 dígitos.");
             return;
         }
@@ -231,21 +216,20 @@ public class cadastro {
             lblFeedback.setText("Formato de email inválido.");
             return;
         }
-
         try {
             UsuarioDAO dao = new UsuarioDAO();
             dao.salvar(cpf, email, nome, senha, generoSelecionado);
-            JOptionPane.showMessageDialog(tela, "Usuário cadastrado com sucesso!"); // Sucesso ainda pode ser um popup
+            JOptionPane.showMessageDialog(tela, "Usuário cadastrado com sucesso!");
             tela.dispose();
             new Login();
         } catch (Exception ex) {
-            // Tratamento de erro mais específico do banco
             if (ex.getMessage().contains("Duplicate entry")) {
                 lblFeedback.setText("Erro: CPF ou Email já cadastrado.");
             } else {
                 lblFeedback.setText("Erro ao conectar ao banco de dados.");
             }
-            ex.printStackTrace(); // Para depuração no console
+            ex.printStackTrace();
         }
     }
+
 }
